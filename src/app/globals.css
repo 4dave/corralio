@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+/* Make the calendar/time picker icons visible on dark backgrounds */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.5);
+  opacity: 0.9;
+}
+
+/* Optional: adjust hover for subtle visual feedback */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  filter: invert(1) brightness(2);
+  cursor: pointer;
+}
