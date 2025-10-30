@@ -138,6 +138,25 @@ export default async function EventPage({
     }))
   }
 
+  if (event.status === "closed") {
+    return (
+      <div className="mx-auto max-w-2xl space-y-4 p-6 text-zinc-100 bg-[#0d0d10] min-h-screen">
+        <h1 className="text-2xl font-bold">{event.title}</h1>
+        <p className="text-zinc-400 italic">This event is closed.</p>
+        <div className="text-zinc-300">
+          {event.locationText ?? "Location TBA"}
+        </div>
+        <div className="text-zinc-400">
+          {new Date(event.startsAt).toLocaleString()}
+          {event.endsAt ? ` – ${new Date(event.endsAt).toLocaleString()}` : ""}
+        </div>
+        {event.description ? (
+          <p className="mt-1 text-zinc-200">{event.description}</p>
+        ) : null}
+      </div>
+    )
+  }
+
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-6 text-zinc-100 bg-[#0d0d10] min-h-screen">
       <h1 className="text-2xl font-bold">{event.title}</h1>
@@ -151,6 +170,14 @@ export default async function EventPage({
       {event.description ? (
         <p className="mt-1 text-zinc-200">{event.description}</p>
       ) : null}
+
+      {/* Comments (same as before) */}
+      <CommentsSection
+        initial={initialComments}
+        shareToken={shareToken}
+        onSubmit={addCommentAction}
+        canPost={!!session}
+      />
 
       {/* Owner-only: Invite guests form + status table */}
       {isOwner && (
@@ -166,14 +193,6 @@ export default async function EventPage({
           </div>
         </>
       )}
-
-      {/* Comments (same as before) */}
-      <CommentsSection
-        initial={initialComments}
-        shareToken={shareToken}
-        onSubmit={addCommentAction}
-        canPost={!!session}
-      />
     </div>
   )
 }
