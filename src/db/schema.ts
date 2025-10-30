@@ -9,6 +9,13 @@ import {
 } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
+export const inviteStatusEnum = pgEnum("invite_status", [
+  "pending",
+  "accepted",
+  "declined",
+])
+export const rsvpResponseEnum = pgEnum("rsvp_response", ["yes", "no", "maybe"])
+
 /* ===== Auth tables (per @auth/drizzle-adapter minimal) ===== */
 export const users = pgTable("users", {
   id: text("id").primaryKey(), // Auth.js expects string id
@@ -94,6 +101,37 @@ export const comments = pgTable("comments", {
     .notNull(),
   userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
   body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+})
+
+export const eventInvites = pgTable("event_invites", {
+  id: uuid("id")
+    .default(sql`gen_random_uuid()`)
+    .primaryKey(),
+  eventId: uuid("event_id")
+    .references(() => events.id, { onDelete: "cascade" })
+    .notNull(),
+  email: text("email").notNull(),
+  inviteToken: text("invite_token").notNull().unique(),
+  status: inviteStatusEnum("status").notNull().default("pending"),
+  respondedAt: timestamp("responded_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+})
+
+export const rsvps = pgTable("rsvps", {
+  id: uuid("id")
+    .default(sql`gen_random_uuid()`)
+    .primaryKey(),
+  eventId: uuid("event_id")
+    .references(() => events.id, { onDelete: "cascade" })
+    .notNull(),
+  userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+  email: text("email"),
+  response: rsvpResponseEnum("response").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
