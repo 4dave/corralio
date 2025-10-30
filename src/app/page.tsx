@@ -1,6 +1,9 @@
 "use client"
 
+import { useRouter } from "next/navigation"
+
 export default function Home() {
+  const router = useRouter()
   const scrollToHow = () => {
     const el = document.getElementById("how")
     if (el) el.scrollIntoView({ behavior: "smooth" })
@@ -51,7 +54,10 @@ export default function Home() {
             >
               How it works
             </button>
-            <button className="rounded-xl border border-transparent bg-linear-to-b from-[#ff6b57] to-[#ff5a43] px-3 py-2 font-semibold text-[#0d0d10] shadow-[0_10px_30px_rgba(0,0,0,.35)] transition hover:brightness-105">
+            <button
+              className="rounded-xl border border-transparent bg-linear-to-b from-[#ff6b57] to-[#ff5a43] px-3 py-2 font-semibold text-[#0d0d10] shadow-[0_10px_30px_rgba(0,0,0,.35)] transition hover:brightness-105"
+              onClick={() => router.push("/new")}
+            >
               Create an Event
             </button>
           </div>
@@ -74,7 +80,10 @@ export default function Home() {
             </p>
 
             <div className="mt-5 flex flex-wrap gap-3">
-              <button className="rounded-xl border border-transparent bg-linear-to-b from-[#ff6b57] to-[#ff5a43] px-4 py-2.5 font-semibold text-[#0d0d10] shadow-[0_10px_30px_rgba(0,0,0,.35)] transition hover:brightness-105">
+              <button
+                className="rounded-xl border border-transparent bg-linear-to-b from-[#ff6b57] to-[#ff5a43] px-4 py-2.5 font-semibold text-[#0d0d10] shadow-[0_10px_30px_rgba(0,0,0,.35)] transition hover:brightness-105"
+                onClick={() => router.push("/new")}
+              >
                 Create an Event
               </button>
               <button
@@ -196,7 +205,10 @@ export default function Home() {
               <strong>Ready to corral your crew?</strong> Create your first
               event in under a minute.
             </p>
-            <button className="rounded-xl border border-transparent bg-linear-to-b from-[#ff6b57] to-[#ff5a43] px-4 py-2.5 font-semibold text-[#0d0d10] shadow-[0_10px_30px_rgba(0,0,0,.35)]">
+            <button
+              className="rounded-xl border border-transparent bg-linear-to-b from-[#ff6b57] to-[#ff5a43] px-4 py-2.5 font-semibold text-[#0d0d10] shadow-[0_10px_30px_rgba(0,0,0,.35)]"
+              onClick={() => router.push("/new")}
+            >
               Create an Event
             </button>
           </div>
