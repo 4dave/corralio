@@ -53,6 +53,14 @@ export default async function InvitePage({
         </button>
         <button
           name="decision"
+          value="maybe"
+          className="rounded-xl border border-zinc-700 bg-zinc-900/70 px-4 py-2 font-semibold text-zinc-100 hover:border-[#ff6b57]"
+        >
+          Maybe
+        </button>
+
+        <button
+          name="decision"
           value="declined"
           className="rounded-xl border border-zinc-700 bg-zinc-900/70 px-4 py-2 font-semibold text-zinc-100 hover:border-[#ff6b57]"
         >
