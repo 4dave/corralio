@@ -21,16 +21,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       from: process.env.EMAIL_FROM!,
       async sendVerificationRequest({ identifier, url, provider }) {
         try {
-          console.log("Attempting to send verification email to:", identifier)
-          console.log(
-            "Using API key:",
-            (process.env.AUTH_RESEND_KEY || process.env.RESEND_API_KEY)?.slice(
-              0,
-              8
-            ) + "..."
-          )
-          console.log("From address:", process.env.EMAIL_FROM)
-
           const { host } = new URL(url)
           const response = await fetch("https://api.resend.com/emails", {
             method: "POST",
@@ -46,11 +36,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             }),
           })
 
-          const data = await response.json()
-          console.log("Resend API response:", data)
-
           if (!response.ok) {
-            throw new Error("Failed to send verification email")
+            const error = await response.json()
+            throw new Error(
+              `Failed to send verification email: ${JSON.stringify(error)}`
+            )
           }
         } catch (error) {
           console.error("Error sending verification email:", error)
