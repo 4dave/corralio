@@ -9,11 +9,13 @@ type Event = {
 
 const memory = { events: [] as Event[] } // shared shape if you also import from create route
 
+import { NextRequest } from "next/server"
+
 export async function GET(
-  _: Request,
-  { params }: { params: { shareToken: string } }
+  request: NextRequest,
+  context: { params: Promise<{ shareToken: string }> }
 ) {
-  const token = params.shareToken
+  const token = (await context.params).shareToken
 
   if (!db) {
     const ev = memory.events.find((e) => e.shareToken === token)
