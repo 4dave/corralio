@@ -6,6 +6,10 @@ import { unstable_noStore as noStore } from "next/cache"
 import CommentsSection from "@/components/CommentsSection"
 import { addCommentAction } from "./actions"
 import { auth } from "@/auth"
+import Link from "next/link"
+import { cookies } from "next/headers"
+import InviteForm from "./invite/InviteForm"
+import { addInvitesAction } from "./invite/actions"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -22,25 +26,24 @@ function AuthBanner({
     <div className="mb-3 rounded-xl border border-zinc-800 bg-zinc-900/60 p-3 text-sm text-zinc-300">
       {email ? (
         <div>
-          Signed in as <span className="font-semibold">{email}</span>.{" "}
-          <a
+          <Link
             className="underline hover:text-[#ffb199]"
             href="/api/auth/signout?callbackUrl=/"
           >
             Sign out
-          </a>
+          </Link>
         </div>
       ) : (
         <div>
           You’re not signed in.{" "}
-          <a
+          <Link
             className="underline hover:text-[#ffb199]"
             href={`/api/auth/signin?callbackUrl=${encodeURIComponent(
               `/e/${shareToken}`
             )}`}
           >
             Sign in
-          </a>{" "}
+          </Link>{" "}
           to post comments.
         </div>
       )}
@@ -84,6 +87,26 @@ export default async function EventPage({
     .limit(1)
   if (!event) return <div className="p-6">Event not found.</div>
 
+  // Private visibility gate
+  if (event.visibility === "private") {
+    const cookieStore = await cookies()
+    const cookieGate =
+      cookieStore.get(`invite_access_${event.id}`)?.value === "true"
+    const isOwner = session?.user?.id === event.ownerId
+    if (!cookieGate && !isOwner) {
+      return (
+        <div className="mx-auto max-w-2xl space-y-4 p-6 text-zinc-100 bg-[#0d0d10] min-h-screen">
+          <h1 className="text-2xl font-bold">Private Event</h1>
+          <p className="text-zinc-300">
+            This event is private. You need an invite to view it.
+          </p>
+          <p className="text-zinc-400">
+            Check your email for an invitation link.
+          </p>
+        </div>
+      )
+    }
+  }
   const rows = await db
     .select({
       id: commentsTable.id,
@@ -115,6 +138,14 @@ export default async function EventPage({
       ) : null}
 
       <AuthBanner email={email} shareToken={shareToken} />
+
+      {session?.user?.id === event.ownerId && (
+        <div className="pt-6">
+          <h2 className="mb-2 text-lg font-semibold">Invite Guests</h2>
+          <InviteForm shareToken={shareToken} onSubmit={addInvitesAction} />
+        </div>
+      )}
+
       <CommentsSection
         initial={initial}
         shareToken={shareToken}
