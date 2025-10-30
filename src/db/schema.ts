@@ -17,6 +17,8 @@ export const inviteStatusEnum = pgEnum("invite_status", [
 ])
 export const rsvpResponseEnum = pgEnum("rsvp_response", ["yes", "no", "maybe"])
 
+export const eventStatusEnum = pgEnum("event_status", ["open", "closed"])
+
 /* ===== Auth tables (per @auth/drizzle-adapter minimal) ===== */
 export const users = pgTable("users", {
   id: text("id").primaryKey(), // Auth.js expects string id
@@ -91,6 +93,7 @@ export const events = pgTable("events", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
+  status: eventStatusEnum("status").notNull().default("open"),
 })
 
 export const comments = pgTable("comments", {
