@@ -6,6 +6,7 @@ import {
   pgEnum,
   primaryKey,
   integer,
+  uniqueIndex,
 } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
@@ -122,17 +123,25 @@ export const eventInvites = pgTable("event_invites", {
     .notNull(),
 })
 
-export const rsvps = pgTable("rsvps", {
-  id: uuid("id")
-    .default(sql`gen_random_uuid()`)
-    .primaryKey(),
-  eventId: uuid("event_id")
-    .references(() => events.id, { onDelete: "cascade" })
-    .notNull(),
-  userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
-  email: text("email"),
-  response: rsvpResponseEnum("response").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-})
+export const rsvps = pgTable(
+  "rsvps",
+  {
+    id: uuid("id")
+      .default(sql`gen_random_uuid()`)
+      .primaryKey(),
+    eventId: uuid("event_id")
+      .references(() => events.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: text("user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    email: text("email"),
+    response: rsvpResponseEnum("response").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => ({
+    uniqEventEmail: uniqueIndex("rsvps_event_email_idx").on(t.eventId, t.email),
+  })
+)
