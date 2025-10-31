@@ -140,12 +140,34 @@ export default async function EventPage({
 
   if (event.status === "closed") {
     return (
+      <div className="bg-[#331C1B]">
+        <div className="mx-auto max-w-2xl space-y-4 p-6 text-zinc-100 bg-[#0d0d10] min-h-screen">
+          <h1 className="text-2xl font-bold">{event.title}</h1>
+          <p className="text-zinc-400 italic">This event is closed.</p>
+          <div className="text-zinc-300">
+            {event.locationText ?? "Location TBA"}
+          </div>
+          <div className="text-zinc-400">
+            {new Date(event.startsAt).toLocaleString()}
+            {event.endsAt
+              ? ` – ${new Date(event.endsAt).toLocaleString()}`
+              : ""}
+          </div>
+          {event.description ? (
+            <p className="mt-1 text-zinc-200">{event.description}</p>
+          ) : null}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-[#331C1B]">
       <div className="mx-auto max-w-2xl space-y-4 p-6 text-zinc-100 bg-[#0d0d10] min-h-screen">
         <h1 className="text-2xl font-bold">{event.title}</h1>
-        <p className="text-zinc-400 italic">This event is closed.</p>
-        <div className="text-zinc-300">
-          {event.locationText ?? "Location TBA"}
-        </div>
+        {event.locationText ? (
+          <div className="text-zinc-300">{event.locationText}</div>
+        ) : null}
         <div className="text-zinc-400">
           {new Date(event.startsAt).toLocaleString()}
           {event.endsAt ? ` – ${new Date(event.endsAt).toLocaleString()}` : ""}
@@ -153,46 +175,30 @@ export default async function EventPage({
         {event.description ? (
           <p className="mt-1 text-zinc-200">{event.description}</p>
         ) : null}
-      </div>
-    )
-  }
 
-  return (
-    <div className="mx-auto max-w-2xl space-y-4 p-6 text-zinc-100 bg-[#0d0d10] min-h-screen">
-      <h1 className="text-2xl font-bold">{event.title}</h1>
-      {event.locationText ? (
-        <div className="text-zinc-300">{event.locationText}</div>
-      ) : null}
-      <div className="text-zinc-400">
-        {new Date(event.startsAt).toLocaleString()}
-        {event.endsAt ? ` – ${new Date(event.endsAt).toLocaleString()}` : ""}
-      </div>
-      {event.description ? (
-        <p className="mt-1 text-zinc-200">{event.description}</p>
-      ) : null}
+        {/* Comments (same as before) */}
+        <CommentsSection
+          initial={initialComments}
+          shareToken={shareToken}
+          onSubmit={addCommentAction}
+          canPost={!!session}
+        />
 
-      {/* Comments (same as before) */}
-      <CommentsSection
-        initial={initialComments}
-        shareToken={shareToken}
-        onSubmit={addCommentAction}
-        canPost={!!session}
-      />
+        {/* Owner-only: Invite guests form + status table */}
+        {isOwner && (
+          <div>
+            <div className="pt-6">
+              <h2 className="mb-2 text-lg font-semibold">Invite Guests</h2>
+              <InviteForm shareToken={shareToken} onSubmit={addInvitesAction} />
+            </div>
 
-      {/* Owner-only: Invite guests form + status table */}
-      {isOwner && (
-        <>
-          <div className="pt-6">
-            <h2 className="mb-2 text-lg font-semibold">Invite Guests</h2>
-            <InviteForm shareToken={shareToken} onSubmit={addInvitesAction} />
+            <div className="pt-4">
+              <h2 className="mb-2 text-lg font-semibold">Invite Status</h2>
+              <InviteStatusTable invites={invites} rsvps={rsvpRows} />
+            </div>
           </div>
-
-          <div className="pt-4">
-            <h2 className="mb-2 text-lg font-semibold">Invite Status</h2>
-            <InviteStatusTable invites={invites} rsvps={rsvpRows} />
-          </div>
-        </>
-      )}
+        )}
+      </div>
     </div>
   )
 }
