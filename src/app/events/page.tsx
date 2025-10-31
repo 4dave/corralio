@@ -119,7 +119,7 @@ export default async function AdminEventsPage({
         <Header email={session.user.email} />
         <Filters initial={{ q, vis, status, from, to }} />
 
-        <div className="rounded-2xl border border-zinc-800 overflow-hidden">
+        <div className="rounded-2xl border border-zinc-800 overflow-x-scroll">
           <table className="w-full text-sm">
             <thead className="bg-zinc-900/70 text-zinc-300">
               <tr>
